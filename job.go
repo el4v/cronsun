@@ -194,42 +194,42 @@ func (j *Job) Init(nodeID, hostname, ip string) {
 }
 
 func (c *Cmd) lockTtl() int64 {
-	now := time.Now()
-	prev := c.JobRule.Schedule.Next(now)
-	ttl := int64(c.JobRule.Schedule.Next(prev).Sub(prev) / time.Second)
-	if ttl == 0 {
-		return 0
-	}
+	// now := time.Now()
+	// prev := c.JobRule.Schedule.Next(now)
+	// ttl := int64(c.JobRule.Schedule.Next(prev).Sub(prev) / time.Second)
+	// if ttl == 0 {
+	// 	return 0
+	// }
 
-	if c.Job.Kind == KindInterval {
-		ttl -= 2
-		if ttl > conf.Config.LockTtl {
-			ttl = conf.Config.LockTtl
-		}
-		if ttl < 1 {
-			ttl = 1
-		}
-		return ttl
-	}
+	// if c.Job.Kind == KindInterval {
+	// 	ttl -= 2
+	// 	if ttl > conf.Config.LockTtl {
+	// 		ttl = conf.Config.LockTtl
+	// 	}
+	// 	if ttl < 1 {
+	// 		ttl = 1
+	// 	}
+	// 	return ttl
+	// }
 
-	cost := c.Job.AvgTime / 1e3
-	if c.Job.AvgTime/1e3-cost*1e3 > 0 {
-		cost += 1
-	}
-	// 如果执行间隔时间不大于执行时间，把过期时间设置为执行时间的下限-1
-	// 以便下次执行的时候，能获取到 lock
-	if ttl >= cost {
-		ttl -= cost
-	}
+	// cost := c.Job.AvgTime / 1e3
+	// if c.Job.AvgTime/1e3-cost*1e3 > 0 {
+	// 	cost += 1
+	// }
+	// // 如果执行间隔时间不大于执行时间，把过期时间设置为执行时间的下限-1
+	// // 以便下次执行的时候，能获取到 lock
+	// if ttl >= cost {
+	// 	ttl -= cost
+	// }
 
-	if ttl > conf.Config.LockTtl {
-		ttl = conf.Config.LockTtl
-	}
+	// if ttl > conf.Config.LockTtl {
+	ttl := conf.Config.LockTtl
+	// }
 
-	// 支持的最小时间间隔 2s
-	if ttl < 2 {
-		ttl = 2
-	}
+	// // 支持的最小时间间隔 2s
+	// if ttl < 2 {
+	// 	ttl = 2
+	// }
 
 	return ttl
 }
